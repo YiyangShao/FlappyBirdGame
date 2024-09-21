@@ -1,12 +1,13 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 
-// Renders an obstacle (pipe) with dynamic position and size.
+// Renders an obstacle (pipe) using an image.
 export default function Obstacle({ obstacleWidth, obstacleHeight, obstacleLeft, gapBottom, gapHeight }) {
   return (
     <>
       {/* Upper obstacle */}
-      <View
+      <Image
+        source={require('../assets/images/pipe.png')}
         style={[
           styles.obstacle,
           {
@@ -18,7 +19,8 @@ export default function Obstacle({ obstacleWidth, obstacleHeight, obstacleLeft, 
         ]}
       />
       {/* Lower obstacle */}
-      <View
+      <Image
+        source={require('../assets/images/pipe.png')}
         style={[
           styles.obstacle,
           {
@@ -26,6 +28,7 @@ export default function Obstacle({ obstacleWidth, obstacleHeight, obstacleLeft, 
             height: obstacleHeight,
             left: obstacleLeft,
             bottom: gapBottom - gapHeight / 2,
+            transform: [{ rotate: '180deg' }], // Rotate for the bottom pipe
           },
         ]}
       />
@@ -36,6 +39,6 @@ export default function Obstacle({ obstacleWidth, obstacleHeight, obstacleLeft, 
 const styles = StyleSheet.create({
   obstacle: {
     position: 'absolute',
-    backgroundColor: 'green', // Temporary color for the pipes
+    resizeMode: 'contain',
   },
 });

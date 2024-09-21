@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import Bird from '../components/Bird';
 import Obstacle from '../components/Obstacle';
-import Score from '../components/Score'; // Import the Score component
+import Score from '../components/Score';
 import useGameLogic from '../utils/useGameLogic';
 
 export default function GameScreen() {
@@ -19,7 +19,7 @@ export default function GameScreen() {
           gapBottom={gapBottom}
           gapHeight={200}
         />
-        <Score score={score} /> {/* Render the score */}
+        <Score score={score} />
         <Text style={styles.text}>Flappy Bird Game Coming Soon!</Text>
       </View>
     </TouchableWithoutFeedback>

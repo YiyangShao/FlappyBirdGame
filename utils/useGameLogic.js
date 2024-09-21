@@ -9,12 +9,13 @@ const gapHeight = 200;
 
 export default function useGameLogic() {
   const [birdBottom, setBirdBottom] = useState(screenHeight / 2);
-  const birdLeft = screenWidth / 2;
+  const birdLeft = screenWidth / 4; // Set birdLeft to screenWidth / 4 to place it closer to the center-left
 
   const [obstacleLeft, setObstacleLeft] = useState(screenWidth);
   const [obstacleHeight, setObstacleHeight] = useState(300);
   const [gapBottom, setGapBottom] = useState(screenHeight / 2);
-  const [score, setScore] = useState(0); // Track the player's score
+  const [score, setScore] = useState(0);
+  const [isGameOver, setIsGameOver] = useState(false);
 
   const birdWidth = 50;
   const birdHeight = 60;
@@ -24,7 +25,7 @@ export default function useGameLogic() {
   let obstacleTimerId;
 
   useEffect(() => {
-    if (birdBottom > 0) {
+    if (birdBottom > 0 && !isGameOver) {
       gameTimerId = setInterval(() => {
         setBirdBottom(birdBottom => birdBottom - gravity);
       }, 30);
@@ -33,23 +34,23 @@ export default function useGameLogic() {
     return () => {
       clearInterval(gameTimerId);
     };
-  }, [birdBottom]);
+  }, [birdBottom, isGameOver]);
 
   useEffect(() => {
-    if (obstacleLeft > -obstacleWidth) {
+    if (obstacleLeft > -obstacleWidth && !isGameOver) {
       obstacleTimerId = setInterval(() => {
         setObstacleLeft(obstacleLeft => obstacleLeft - obstacleSpeed);
       }, 30);
-    } else {
+    } else if (!isGameOver) {
       setObstacleLeft(screenWidth);
       setObstacleHeight(Math.random() * (screenHeight - gapHeight));
-      setScore(score => score + 1); // Increment the score when the bird passes an obstacle
+      setScore(score => score + 1);
     }
 
     return () => {
       clearInterval(obstacleTimerId);
     };
-  }, [obstacleLeft]);
+  }, [obstacleLeft, isGameOver]);
 
   useEffect(() => {
     if (
@@ -57,18 +58,23 @@ export default function useGameLogic() {
       obstacleLeft > birdLeft - birdWidth / 2 &&
       obstacleLeft < birdLeft + birdWidth / 2
     ) {
-      Alert.alert('Game Over');
-      setBirdBottom(screenHeight / 2);
-      setObstacleLeft(screenWidth);
-      setScore(0); // Reset score on game over
+      setIsGameOver(true);
+      Alert.alert('Game Over', '', [{ text: 'Restart', onPress: restartGame }]);
     }
   }, [birdBottom, obstacleLeft]);
 
   const jump = () => {
-    if (birdBottom < screenHeight) {
+    if (birdBottom < screenHeight && !isGameOver) {
       setBirdBottom(birdBottom => birdBottom + 50);
     }
   };
 
-  return { birdBottom, birdLeft, obstacleLeft, obstacleHeight, gapBottom, jump, score };
+  const restartGame = () => {
+    setBirdBottom(screenHeight / 2);
+    setObstacleLeft(screenWidth);
+    setScore(0);
+    setIsGameOver(false);
+  };
+
+  return { birdBottom, birdLeft, obstacleLeft, obstacleHeight, gapBottom, jump, score, isGameOver, restartGame };
 }

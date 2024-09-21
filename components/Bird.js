@@ -1,16 +1,17 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 
-// Renders the bird character as a simple colored box for now.
+// Displays the bird character with a bird image.
 export default function Bird({ birdBottom, birdLeft }) {
   const birdWidth = 50;
   const birdHeight = 60;
 
   return (
-    <View
+    <Image
+      source={require('../assets/images/bird.png')}
       style={[
         styles.bird,
-        { left: birdLeft - birdWidth / 2, bottom: birdBottom - birdHeight / 2 },
+        { left: birdLeft - birdWidth / 2, bottom: birdBottom - birdHeight / 2, width: birdWidth, height: birdHeight },
       ]}
     />
   );
@@ -19,8 +20,6 @@ export default function Bird({ birdBottom, birdLeft }) {
 const styles = StyleSheet.create({
   bird: {
     position: 'absolute',
-    width: 50,
-    height: 60,
-    backgroundColor: 'blue', // Temporary color for the bird
+    resizeMode: 'contain',
   },
 });
