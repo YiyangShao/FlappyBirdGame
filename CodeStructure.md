@@ -4,7 +4,7 @@
 - Renders the GameScreen component.
 
 ### screens/GameScreen.js
-- Contains the game components and manages user interaction.
+- Displays the game components over a background image and manages user interaction.
 
 ### components/Bird.js
 - Displays the bird character using an image of a bird.
@@ -16,4 +16,4 @@
 - Displays the player's score based on how long they survive.
 
 ### utils/useGameLogic.js
-- Manages bird movement, obstacle movement, score tracking, collision detection, and game restarting.
+- Manages bird movement, obstacle movement, score tracking, collision detection, game restarting, and plays sound effects (jump and game over).

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Dimensions, Alert } from 'react-native';
+import { Audio } from 'expo-av';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -9,7 +10,7 @@ const gapHeight = 200;
 
 export default function useGameLogic() {
   const [birdBottom, setBirdBottom] = useState(screenHeight / 2);
-  const birdLeft = screenWidth / 4; // Set birdLeft to screenWidth / 4 to place it closer to the center-left
+  const birdLeft = screenWidth / 4;
 
   const [obstacleLeft, setObstacleLeft] = useState(screenWidth);
   const [obstacleHeight, setObstacleHeight] = useState(300);
@@ -23,6 +24,22 @@ export default function useGameLogic() {
 
   let gameTimerId;
   let obstacleTimerId;
+
+  // Load jump sound
+  async function playJumpSound() {
+    const { sound } = await Audio.Sound.createAsync(
+      require('../assets/sounds/jump.mp3')
+    );
+    await sound.playAsync();
+  }
+
+  // Load game over sound
+  async function playGameOverSound() {
+    const { sound } = await Audio.Sound.createAsync(
+      require('../assets/sounds/gameOver.mp3')
+    );
+    await sound.playAsync();
+  }
 
   useEffect(() => {
     if (birdBottom > 0 && !isGameOver) {
@@ -59,6 +76,7 @@ export default function useGameLogic() {
       obstacleLeft < birdLeft + birdWidth / 2
     ) {
       setIsGameOver(true);
+      playGameOverSound(); // Play game over sound
       Alert.alert('Game Over', '', [{ text: 'Restart', onPress: restartGame }]);
     }
   }, [birdBottom, obstacleLeft]);
@@ -66,6 +84,7 @@ export default function useGameLogic() {
   const jump = () => {
     if (birdBottom < screenHeight && !isGameOver) {
       setBirdBottom(birdBottom => birdBottom + 50);
+      playJumpSound(); // Play jump sound
     }
   };
 

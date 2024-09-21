@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { ImageBackground, View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import Bird from '../components/Bird';
 import Obstacle from '../components/Obstacle';
 import Score from '../components/Score';
@@ -11,16 +11,22 @@ export default function GameScreen() {
   return (
     <TouchableWithoutFeedback onPress={jump}>
       <View style={styles.container}>
-        <Bird birdBottom={birdBottom} birdLeft={birdLeft} />
-        <Obstacle
-          obstacleWidth={60}
-          obstacleHeight={obstacleHeight}
-          obstacleLeft={obstacleLeft}
-          gapBottom={gapBottom}
-          gapHeight={200}
-        />
-        <Score score={score} />
-        <Text style={styles.text}>Flappy Bird Game Coming Soon!</Text>
+        {/* Background Image */}
+        <ImageBackground
+          source={require('../assets/images/background.png')}
+          style={styles.background}
+          resizeMode="cover"
+        >
+          <Bird birdBottom={birdBottom} birdLeft={birdLeft} />
+          <Obstacle
+            obstacleWidth={60}
+            obstacleHeight={obstacleHeight}
+            obstacleLeft={obstacleLeft}
+            gapBottom={gapBottom}
+            gapHeight={200}
+          />
+          <Score score={score} />
+        </ImageBackground>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -31,13 +37,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
   },
-  text: {
-    position: 'absolute',
-    top: 50,
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
+  background: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
