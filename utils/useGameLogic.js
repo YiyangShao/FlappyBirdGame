@@ -5,9 +5,8 @@ const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 const gravity = 3;
 const obstacleWidth = 60;
-const gapHeight = 200; // Space between the top and bottom pipes
+const gapHeight = 200;
 
-// Manages bird movement, obstacle movement, and collision detection.
 export default function useGameLogic() {
   const [birdBottom, setBirdBottom] = useState(screenHeight / 2);
   const birdLeft = screenWidth / 2;
@@ -15,6 +14,7 @@ export default function useGameLogic() {
   const [obstacleLeft, setObstacleLeft] = useState(screenWidth);
   const [obstacleHeight, setObstacleHeight] = useState(300);
   const [gapBottom, setGapBottom] = useState(screenHeight / 2);
+  const [score, setScore] = useState(0); // Track the player's score
 
   const birdWidth = 50;
   const birdHeight = 60;
@@ -23,7 +23,6 @@ export default function useGameLogic() {
   let gameTimerId;
   let obstacleTimerId;
 
-  // Handle gravity for the bird
   useEffect(() => {
     if (birdBottom > 0) {
       gameTimerId = setInterval(() => {
@@ -36,7 +35,6 @@ export default function useGameLogic() {
     };
   }, [birdBottom]);
 
-  // Move the obstacle
   useEffect(() => {
     if (obstacleLeft > -obstacleWidth) {
       obstacleTimerId = setInterval(() => {
@@ -45,6 +43,7 @@ export default function useGameLogic() {
     } else {
       setObstacleLeft(screenWidth);
       setObstacleHeight(Math.random() * (screenHeight - gapHeight));
+      setScore(score => score + 1); // Increment the score when the bird passes an obstacle
     }
 
     return () => {
@@ -52,7 +51,6 @@ export default function useGameLogic() {
     };
   }, [obstacleLeft]);
 
-  // Check for collisions
   useEffect(() => {
     if (
       (birdBottom < gapBottom - gapHeight / 2 || birdBottom > gapBottom + gapHeight / 2) &&
@@ -62,15 +60,15 @@ export default function useGameLogic() {
       Alert.alert('Game Over');
       setBirdBottom(screenHeight / 2);
       setObstacleLeft(screenWidth);
+      setScore(0); // Reset score on game over
     }
   }, [birdBottom, obstacleLeft]);
 
-  // Function for the bird to jump
   const jump = () => {
     if (birdBottom < screenHeight) {
       setBirdBottom(birdBottom => birdBottom + 50);
     }
   };
 
-  return { birdBottom, birdLeft, obstacleLeft, obstacleHeight, gapBottom, jump };
+  return { birdBottom, birdLeft, obstacleLeft, obstacleHeight, gapBottom, jump, score };
 }

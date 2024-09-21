@@ -12,5 +12,8 @@
 ### components/Obstacle.js
 - Displays an obstacle with dynamic size and position, representing the pipes.
 
+### components/Score.js
+- Displays the player's score based on how long they survive.
+
 ### utils/useGameLogic.js
-- Manages bird movement, obstacle movement, and collision detection.
+- Manages bird movement, obstacle movement, score tracking, and collision detection.
