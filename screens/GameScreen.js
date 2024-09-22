@@ -6,7 +6,7 @@ import Score from '../components/Score';
 import useGameLogic from '../utils/useGameLogic';
 
 export default function GameScreen() {
-  const { birdBottom, birdLeft, obstacleLeft, obstacleHeight, gapBottom, jump, score, togglePause, isPaused, restartGame, isGameOver } = useGameLogic();
+  const { birdBottom, birdLeft, obstacleLeft, gapBottom, gapHeight, jump, score, togglePause, isPaused, restartGame, isGameOver } = useGameLogic();
 
   return (
     <TouchableWithoutFeedback onPress={jump}>
@@ -18,22 +18,19 @@ export default function GameScreen() {
         >
           <Bird birdBottom={birdBottom} birdLeft={birdLeft} />
           <Obstacle
-            obstacleWidth={60}
-            obstacleHeight={obstacleHeight}
             obstacleLeft={obstacleLeft}
             gapBottom={gapBottom}
-            gapHeight={200}
+            gapHeight={gapHeight}
+            obstacleWidth={60}
           />
           <Score score={score} />
 
-          {/* Restart Button (only shows after game over) */}
           {isGameOver && (
             <View style={styles.restartButton}>
               <Button onPress={restartGame} title="Restart" color="#FF6347" />
             </View>
           )}
 
-          {/* Pause/Resume button */}
           <View style={styles.pauseButton}>
             <Button onPress={togglePause} title={isPaused ? 'Resume' : 'Pause'} />
           </View>
@@ -62,7 +59,7 @@ const styles = StyleSheet.create({
   },
   restartButton: {
     position: 'absolute',
-    bottom: 50, // Position it near the bottom
-    alignSelf: 'center', // Center the button horizontally
+    bottom: 50,
+    alignSelf: 'center',
   },
 });

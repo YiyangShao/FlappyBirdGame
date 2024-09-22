@@ -1,36 +1,44 @@
 import React from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { Image, StyleSheet, Dimensions } from 'react-native';
 
-// Renders an obstacle (pipe) using an image.
-export default function Obstacle({ obstacleWidth, obstacleHeight, obstacleLeft, gapBottom, gapHeight }) {
+// Displays obstacles (pipes) using the pipe image and ensures proper height and position.
+export default function Obstacle({ obstacleLeft, gapBottom, gapHeight, obstacleWidth }) {
+  const screenHeight = Dimensions.get('window').height;
+
+  const topObstacleHeight = screenHeight - (gapBottom + gapHeight / 2); // Height of the top obstacle
+  const bottomObstacleHeight = gapBottom - gapHeight / 2; // Height of the bottom obstacle
+
   return (
     <>
-      {/* Upper obstacle */}
+      {/* Top pipe (stretches from the ceiling) */}
       <Image
-        source={require('../assets/images/pipe.png')}
+        source={require('../assets/images/pipe.png')} // Replace with your actual pipe image path
         style={[
           styles.obstacle,
           {
             width: obstacleWidth,
-            height: obstacleHeight,
+            height: topObstacleHeight,
             left: obstacleLeft,
-            bottom: gapBottom + gapHeight / 2,
+            bottom: screenHeight - topObstacleHeight, // Positioned at the top
+            transform: [{ rotate: '180deg' }], // Rotate for the top pipe
           },
         ]}
+        resizeMode="stretch"
       />
-      {/* Lower obstacle */}
+      
+      {/* Bottom pipe (stretches from the ground) */}
       <Image
         source={require('../assets/images/pipe.png')}
         style={[
           styles.obstacle,
           {
             width: obstacleWidth,
-            height: obstacleHeight,
+            height: bottomObstacleHeight,
             left: obstacleLeft,
-            bottom: gapBottom - gapHeight / 2,
-            transform: [{ rotate: '180deg' }], // Rotate for the bottom pipe
+            bottom: 0, // Positioned at the bottom
           },
         ]}
+        resizeMode="stretch"
       />
     </>
   );
@@ -39,6 +47,6 @@ export default function Obstacle({ obstacleWidth, obstacleHeight, obstacleLeft, 
 const styles = StyleSheet.create({
   obstacle: {
     position: 'absolute',
-    resizeMode: 'contain',
+    resizeMode: 'stretch', // Ensures the pipe stretches properly
   },
 });

@@ -13,11 +13,10 @@ export default function useGameLogic() {
   const birdLeft = screenWidth / 4;
 
   const [obstacleLeft, setObstacleLeft] = useState(screenWidth);
-  const [obstacleHeight, setObstacleHeight] = useState(300);
-  const [gapBottom, setGapBottom] = useState(screenHeight / 2);
+  const [gapBottom, setGapBottom] = useState(screenHeight / 2); // Dynamic gap position
   const [score, setScore] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
-  const [isPaused, setIsPaused] = useState(false); // New pause state
+  const [isPaused, setIsPaused] = useState(false); // Pause state
   const [obstacleSpeed, setObstacleSpeed] = useState(5);
 
   const birdWidth = 50;
@@ -36,7 +35,7 @@ export default function useGameLogic() {
     await sound.playAsync();
   }
 
-  // Gravity for the bird
+  // Apply gravity to the bird
   useEffect(() => {
     if (birdBottom > 0 && !isGameOver && !isPaused) {
       gameTimerId = setInterval(() => {
@@ -49,18 +48,17 @@ export default function useGameLogic() {
     };
   }, [birdBottom, isGameOver, isPaused]);
 
-  // Move the obstacle
+  // Move the obstacle and adjust the gap position
   useEffect(() => {
     if (obstacleLeft > -obstacleWidth && !isGameOver && !isPaused) {
       obstacleTimerId = setInterval(() => {
         setObstacleLeft(obstacleLeft => obstacleLeft - obstacleSpeed);
       }, 30);
     } else if (!isGameOver && !isPaused) {
-      setObstacleLeft(screenWidth);
-      setObstacleHeight(Math.random() * (screenHeight - gapHeight));
-      setGapBottom(Math.random() * (screenHeight - gapHeight));
-      setScore(score => score + 1);
-      setObstacleSpeed(obstacleSpeed => obstacleSpeed + 0.5);
+      setObstacleLeft(screenWidth); // Reset obstacle position to the right
+      setGapBottom(Math.random() * (screenHeight - gapHeight)); // Randomize gap position
+      setScore(score => score + 1); // Increase the score when obstacle resets
+      setObstacleSpeed(obstacleSpeed => obstacleSpeed + 0.5); // Increase speed with score
     }
 
     return () => {
@@ -68,10 +66,16 @@ export default function useGameLogic() {
     };
   }, [obstacleLeft, isGameOver, isPaused]);
 
-  // Collision detection
+  // Collision detection with the obstacles
   useEffect(() => {
+    const birdTop = birdBottom + birdHeight / 2;
+    const birdBottomEdge = birdBottom - birdHeight / 2;
+
+    const gapTop = gapBottom + gapHeight / 2;
+    const gapBottomEdge = gapBottom - gapHeight / 2;
+
     if (
-      (birdBottom < gapBottom - gapHeight / 2 || birdBottom > gapBottom + gapHeight / 2) &&
+      (birdBottomEdge < gapBottomEdge || birdTop > gapTop) && // Bird hits an obstacle
       obstacleLeft > birdLeft - birdWidth / 2 &&
       obstacleLeft < birdLeft + birdWidth / 2
     ) {
@@ -81,6 +85,7 @@ export default function useGameLogic() {
     }
   }, [birdBottom, obstacleLeft]);
 
+  // Make the bird jump
   const jump = () => {
     if (birdBottom < screenHeight && !isGameOver && !isPaused) {
       setBirdBottom(birdBottom => birdBottom + 50);
@@ -88,6 +93,7 @@ export default function useGameLogic() {
     }
   };
 
+  // Restart the game
   const restartGame = () => {
     setBirdBottom(screenHeight / 2);
     setObstacleLeft(screenWidth);
@@ -96,10 +102,22 @@ export default function useGameLogic() {
     setIsGameOver(false);
   };
 
-  // Pause and resume game
+  // Pause and resume the game
   const togglePause = () => {
     setIsPaused(!isPaused);
   };
 
-  return { birdBottom, birdLeft, obstacleLeft, obstacleHeight, gapBottom, jump, score, isGameOver, restartGame, togglePause, isPaused };
+  return {
+    birdBottom,
+    birdLeft,
+    obstacleLeft,
+    gapBottom,
+    gapHeight,
+    jump,
+    score,
+    isGameOver,
+    restartGame,
+    togglePause,
+    isPaused,
+  };
 }
