@@ -4,7 +4,7 @@
 - Renders the GameScreen component.
 
 ### screens/GameScreen.js
-- Displays the game components, manages user interaction, and provides a button to pause/resume the game. The container width is set to 100% to ensure proper screen positioning.
+- Displays the game components over a background image that covers the entire screen, manages user interaction, and includes restart and pause/resume buttons.
 
 ### components/Bird.js
 - Displays the bird character using an image of a bird.
