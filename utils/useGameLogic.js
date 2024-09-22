@@ -4,7 +4,8 @@ import { Audio } from 'expo-av';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
-const gravity = 3;
+const gravity = 0.5; // Reduced gravity for smoother acceleration
+const jumpImpulse = -10; // Upward velocity when the bird jumps
 const obstacleWidth = 60;
 const gapHeight = 200;
 
@@ -14,9 +15,10 @@ export default function useGameLogic() {
 
   const [obstacleLeft, setObstacleLeft] = useState(screenWidth);
   const [gapBottom, setGapBottom] = useState(screenHeight / 2); // Dynamic gap position
+  const [birdSpeed, setBirdSpeed] = useState(0); // Vertical speed of the bird (affected by gravity and jump)
   const [score, setScore] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
-  const [isPaused, setIsPaused] = useState(false); // Pause state
+  const [isPaused, setIsPaused] = useState(false);
   const [obstacleSpeed, setObstacleSpeed] = useState(5);
 
   const birdWidth = 50;
@@ -35,18 +37,19 @@ export default function useGameLogic() {
     await sound.playAsync();
   }
 
-  // Apply gravity to the bird
+  // Apply gravity with acceleration (falling speed increases over time)
   useEffect(() => {
     if (birdBottom > 0 && !isGameOver && !isPaused) {
       gameTimerId = setInterval(() => {
-        setBirdBottom(birdBottom => birdBottom - gravity);
+        setBirdSpeed(speed => speed + gravity); // Gravity increases downward speed
+        setBirdBottom(birdBottom => birdBottom - birdSpeed); // Bird moves up or down based on speed
       }, 30);
     }
 
     return () => {
       clearInterval(gameTimerId);
     };
-  }, [birdBottom, isGameOver, isPaused]);
+  }, [birdBottom, birdSpeed, isGameOver, isPaused]);
 
   // Move the obstacle and adjust the gap position
   useEffect(() => {
@@ -55,9 +58,9 @@ export default function useGameLogic() {
         setObstacleLeft(obstacleLeft => obstacleLeft - obstacleSpeed);
       }, 30);
     } else if (!isGameOver && !isPaused) {
-      setObstacleLeft(screenWidth); // Reset obstacle position to the right
+      setObstacleLeft(screenWidth);
       setGapBottom(Math.random() * (screenHeight - gapHeight)); // Randomize gap position
-      setScore(score => score + 1); // Increase the score when obstacle resets
+      setScore(score => score + 1);
       setObstacleSpeed(obstacleSpeed => obstacleSpeed + 0.5); // Increase speed with score
     }
 
@@ -85,10 +88,10 @@ export default function useGameLogic() {
     }
   }, [birdBottom, obstacleLeft]);
 
-  // Make the bird jump
+  // Make the bird jump by changing its speed
   const jump = () => {
     if (birdBottom < screenHeight && !isGameOver && !isPaused) {
-      setBirdBottom(birdBottom => birdBottom + 50);
+      setBirdSpeed(jumpImpulse); // Set upward velocity
       playJumpSound();
     }
   };
@@ -99,6 +102,7 @@ export default function useGameLogic() {
     setObstacleLeft(screenWidth);
     setScore(0);
     setObstacleSpeed(5);
+    setBirdSpeed(0); // Reset bird speed
     setIsGameOver(false);
   };
 
