@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import GameScreen from './screens/GameScreen';
 
 // Renders the main game screen.
-export default function App() {
+export default function FlappyBird() {
   return (
     <View style={styles.container}>
       <GameScreen />
